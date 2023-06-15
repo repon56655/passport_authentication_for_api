@@ -42,6 +42,7 @@ class AuthorController extends Controller
         }
     }
 
+ 
     // Login Function
     public function login(Request $request){
 
@@ -57,8 +58,8 @@ class AuthorController extends Controller
             ]);
         }
 
-        $token = auth()->user()->createToken("auth_token");
-
+        $token = auth()->user()->createToken("auth_token")->accessToken;
+    
         return response()->json([
             "status" => true,
             "message" => "Loged In",
@@ -70,10 +71,36 @@ class AuthorController extends Controller
     // Profile Function 
     public function profile(){
 
+        $author = Author::all();
+        return response()->json([
+            "status" => true,
+            "message" => "profile view",
+            "author" => $author
+        ]);
+
     }
 
     // Logout Function
     public function logout(){
+        $token = auth()->user()->token();
+
+            $token_revoke = $token->revoke();
+            if($token_revoke){
+                return response()->json([
+                    "status" => true,
+                    "message" => "logout successfully",
+                    "token_revoke" => $token_revoke
+                ]);
+            }
+            else{
+                return response()->json([
+                    "status" => false,
+                    "message" => "something wrong",
+                    "token_revoke" => $token_revoke
+                ]);
+            }
+
+
 
     }
 }
